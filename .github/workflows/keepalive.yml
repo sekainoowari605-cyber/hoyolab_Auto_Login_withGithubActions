@@ -1,0 +1,23 @@
+name: Keepalive Workflow
+
+on:
+  schedule:
+    # 毎月1日の午前0時(UTC)に自動実行してリポジトリを更新する
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keepalive Commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          date > keepalive.txt
+          git add keepalive.txt
+          git commit -m "Chore: keepalive commit to prevent workflow suspension" || exit 0
+          git push
